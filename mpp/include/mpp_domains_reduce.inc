@@ -528,6 +528,7 @@
 !                                                                             !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+#define DO_EFP_SUM_
 #undef MPP_GLOBAL_SUM_AD_
 #define MPP_GLOBAL_SUM_AD_ mpp_global_sum_ad_r8_2d
 #undef MPP_EXTRA_INDICES_
@@ -560,6 +561,7 @@
 #define MPP_TYPE_ real(DOUBLE_KIND)
 #include <mpp_global_sum_ad.h>
 
+#undef DO_EFP_SUM_
 #ifdef OVERLOAD_C8
 #undef MPP_GLOBAL_SUM_AD_
 #define MPP_GLOBAL_SUM_AD_ mpp_global_sum_ad_c8_2d
@@ -594,6 +596,7 @@
 #include <mpp_global_sum_ad.h>
 #endif
 
+#define DO_EFP_SUM_
 #ifdef OVERLOAD_R4
 #undef MPP_GLOBAL_SUM_AD_
 #define MPP_GLOBAL_SUM_AD_ mpp_global_sum_ad_r4_2d
@@ -628,6 +631,7 @@
 #include <mpp_global_sum_ad.h>
 #endif
 
+#undef DO_EFP_SUM_
 #ifdef OVERLOAD_C4
 #undef MPP_GLOBAL_SUM_AD_
 #define MPP_GLOBAL_SUM_AD_ mpp_global_sum_ad_c4_2d
