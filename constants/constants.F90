@@ -55,10 +55,11 @@ real :: realnumber !< dummy variable to use in HUGE initializations
    real,               public, parameter :: EPSLN    = 1.0e-40      !< A small number to prevent divide by zero exceptions [N/A]
    real,               public, parameter :: WTMAIR   = 2.896440E+01   !< Molecular weight of air [AMU]
    real,               public, parameter :: WTMCO2   = 44.00995      !< Molecular weight of carbon dioxide [AMU]
+   real,               public, parameter :: KELVIN   = 273.16    !< Degrees Kelvin at zero Celsius [K]
 #else
 
 #ifdef GFS_PHYS
-   ! SJL: the following are from fv3_gfsphysics/gfs_phyeics/physics/physcons.f90
+   ! SJL: the following are from fv3_gfsphysics/gfs_physics/physics/physcons.f90
    real,               public, parameter :: RADIUS = 6.3712e+6_r8_kind           !< Radius of the Earth [m]
    real(kind=r8_kind), public, parameter :: PI_8   = 3.1415926535897931_r8_kind  !< Ratio of circle circumference to diameter [N/A]
    real,               public, parameter :: PI     = 3.1415926535897931_r8_kind  !< Ratio of circle circumference to diameter [N/A] (REAL(KIND=8))
@@ -109,6 +110,8 @@ real :: realnumber !< dummy variable to use in HUGE initializations
    real, public, parameter :: EPSLN              = 1.0e-40_r8_kind      !< A small number to prevent divide by zero exceptions [N/A]
    real, public, parameter :: WTMAIR   = 2.896440E+01_r8_kind   !< Molecular weight of air [AMU]
    real, public, parameter :: WTMCO2   =  44.00995_r8_kind      !< Molecular weight of carbon dioxide [AMU]
+   real, public, parameter :: KELVIN      = 273.15_r8_kind     !< Degrees Kelvin at zero Celsius [K]
+
 #endif
 
 real, public, parameter :: STEFAN  = 5.6734e-8_r8_kind !< Stefan-Boltzmann constant [W/m^2/deg^4]
@@ -152,7 +155,6 @@ real, public, parameter :: O2MIXRAT    = 2.0953E-01_r8_kind !< Mixing ratio of m
 real, public, parameter :: RHOAIR      = 1.292269_r8_kind   !< Reference atmospheric density [kg/m^3]
 real, public, parameter :: VONKARM     = 0.40_r8_kind       !< Von Karman constant [dimensionless]
 real, public, parameter :: C2DBARS     = 1.e-4_r8_kind      !< Converts rho*g*z (in mks) to dbars: 1dbar = 10^4 (kg/m^3)(m/s^2)m [dbars]
-real, public, parameter :: KELVIN      = 273.15_r8_kind     !< Degrees Kelvin at zero Celsius [K]
 
 public :: constants_init
 

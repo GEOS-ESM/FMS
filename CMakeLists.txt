@@ -1,5 +1,5 @@
 esma_set_this ()
-string (REPLACE GFDL_fms_ "" precision ${this})
+string (REPLACE fms_ "" precision ${this})
 
 # The following logic is to avoid duplication in the supported GNUMake logic.
 # Source files (and headers) are listed in a separate file, and we must
@@ -37,7 +37,6 @@ set(srcs_and_includes
    drifters/fms_switches.h
    drifters/quicksort.F90
    exchange/stock_constants.F90
-   exchange/test_xgrid.F90
    exchange/xgrid.F90
    field_manager/field_manager.F90
    field_manager/fm_util.F90
@@ -57,8 +56,6 @@ set(srcs_and_includes
    fms/read_data_2d.inc
    fms/read_data_3d.inc
    fms/read_data_4d.inc
-   fms/test_fms_io.F90
-   fms/test_unstructured_fms_io.F90
    fms/write_data.inc
    horiz_interp/horiz_interp.F90
    horiz_interp/horiz_interp_bicubic.F90
@@ -66,7 +63,6 @@ set(srcs_and_includes
    horiz_interp/horiz_interp_conserve.F90
    horiz_interp/horiz_interp_spherical.F90
    horiz_interp/horiz_interp_type.F90
-   horiz_interp/test_horiz_interp.F90
    include/file_version.h
    include/fms_platform.h
    interpolator/interpolator.F90
@@ -86,7 +82,6 @@ set(srcs_and_includes
    mosaic/mosaic_util.h
    mosaic/read_mosaic.c
    mosaic/read_mosaic.h
-   mpp/affinity.c
    mpp/mpp.F90
    mpp/mpp_data.F90
    mpp/mpp_domains.F90
@@ -97,10 +92,6 @@ set(srcs_and_includes
    mpp/mpp_pset.F90
    mpp/mpp_utilities.F90
    mpp/nsclock.c
-   mpp/test_mpp.F90
-   mpp/test_mpp_domains.F90
-   mpp/test_mpp_io.F90
-   mpp/test_mpp_pset.F90
    mpp/threadloc.c
    mpp/include/group_update_pack.inc
    mpp/include/group_update_unpack.inc
@@ -205,6 +196,9 @@ set(srcs_and_includes
    topography/topography.F90
    tracer_manager/tracer_manager.F90
    tridiagonal/tridiagonal.F90
+   affinity/affinity.c
+   affinity/fms_affinity.F90
+   #affinity/test_affinity.F90
    )
 
 
@@ -219,25 +213,41 @@ foreach (file ${srcs_and_includes})
   endif ()
 endforeach ()
 
-set (lib GFDL_fms_${precision})
+set (lib fms_${precision})
 
-esma_add_library (${lib} SRCS ${srcs})
-target_link_libraries (${lib} ${NETCDF_LIBRARIES} ${MPI_Fortran_LIBRARIES})
+esma_add_library (${lib} SRCS ${srcs} TYPE SHARED)
+target_link_libraries (${lib} PUBLIC ${NETCDF_LIBRARIES} ${MPI_Fortran_LIBRARIES})
 
-target_include_directories (${lib} PUBLIC include mpp/include fft fms)
+target_include_directories (${lib} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mpp/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fft>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fms>
+)
 target_include_directories (${lib} PUBLIC ${INC_NETCDF})
 
 file (COPY include/fms_platform.h DESTINATION ${include_${this}})
 file (COPY include/file_version.h DESTINATION ${include_${this}})
 
 # Various compiler options and CPP definitions ...
-target_compile_definitions (${lib} PRIVATE OVERLOAD_R4 MAPL_MODE SPMD use_libMPI use_netCDF PORTABLE_KINDS)
+target_compile_definitions (${lib} PRIVATE OVERLOAD_R4 MAPL_MODE SPMD use_libMPI use_netCDF PORTABLE_KINDS HAVE_GETTID)
+if (precision MATCHES "r4")
+   target_compile_definitions (${lib} PRIVATE OVERLOAD_R8)
+endif ()
 
 if (APPLE)
    target_compile_definitions(${lib} PRIVATE __APPLE__)
 endif ()
 
 set (CMAKE_Fortran_FLAGS_RELEASE "${GEOS_Fortran_FLAGS_VECT}")
+
+# This 'resets' the Intel DEBUG flags for FMS. The stock debug flags use
+# 'all,noarg_temp_created' which seem to be too aggressive for FMS/MOM6. This
+# moves them back to the 'bounds,uninit' GEOS used to build with.
+if (CMAKE_Fortran_COMPILER_ID MATCHES "Intel" AND CMAKE_BUILD_TYPE MATCHES Debug)
+   string(REPLACE "all,noarg_temp_created" "bounds,uninit" _tmp "${GEOS_Fortran_FLAGS_DEBUG}")
+   set (CMAKE_Fortran_FLAGS_DEBUG "${_tmp}")
+endif ()
 
 if (CMAKE_Fortran_COMPILER_ID MATCHES "NAG")
   target_compile_options (${lib} PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-kind=byte>)
@@ -247,6 +257,7 @@ if (CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
 endif ()
 if (CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
   target_compile_options (${lib} PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-diag-disable 6843,7712>) # warnings about dummy args
+  target_compile_options (${lib} PRIVATE $<$<COMPILE_LANGUAGE:Fortran>:-no-heap-arrays>) # mom issue with Intel 19
 endif ()
 if (CMAKE_Fortran_COMPILER_ID MATCHES "PGI")
   target_compile_definitions (${lib} PRIVATE NO_QUAD_PRECISION)

@@ -1732,11 +1732,20 @@ function register_restart_field_r2d8(fileObj, filename, fieldname, data, domain,
   if(.not.module_is_initialized) call mpp_error(FATAL,'fms_io(register_restart_field_r2d8): need to call fms_io_init')
   is_compressed = .false.
   if(present(compressed)) is_compressed=compressed
-  if(present(data_default)) data_default_r4=data_default
-  call setup_one_field(fileObj, filename, fieldname, (/size(data,1), size(data,2), 1, 1/), &
-                       index_field, domain, mandatory, no_domain, is_compressed, &
-                       position, tile_count, data_default_r4, longname, units, compressed_axis, &
-                       read_only=read_only, owns_data=restart_owns_data)
+  if(present(data_default)) then
+     data_default_r4=REAL(data_default, FLOAT_KIND)
+     call setup_one_field(fileObj, filename, fieldname, (/size(data,1), size(data,2), 1, 1/), &
+                          index_field, domain, mandatory, no_domain, is_compressed, &
+                          position, tile_count, data_default_r4, longname, units, compressed_axis, &
+                          read_only=read_only, owns_data=restart_owns_data)
+  else
+     call setup_one_field(fileObj, filename, fieldname, (/size(data,1), size(data,2), 1, 1/), &
+                          index_field, domain, mandatory, no_domain, is_compressed, &
+                          position, tile_count, longname=longname, units=units, compressed_axis=compressed_axis, &
+                          read_only=read_only, owns_data=restart_owns_data)
+  endif
+
+
   fileObj%p2dr8(fileObj%var(index_field)%siz(4), index_field)%p => data
   fileObj%var(index_field)%ndim = 2
   register_restart_field_r2d8 = index_field
@@ -1772,11 +1781,19 @@ function register_restart_field_r3d8(fileObj, filename, fieldname, data, domain,
   if(.not.module_is_initialized) call mpp_error(FATAL,'fms_io(register_restart_field_r3d8): need to call fms_io_init')
   is_compressed = .false.
   if(present(compressed)) is_compressed=compressed
-  if(present(data_default)) data_default_r4=data_default
-  call setup_one_field(fileObj, filename, fieldname, (/size(data,1), size(data,2), size(data,3), 1/), &
-                       index_field, domain, mandatory, no_domain, is_compressed, &
-                       position, tile_count, data_default_r4, longname, units, compressed_axis, &
-                       read_only=read_only, owns_data=restart_owns_data)
+  if(present(data_default)) then
+     data_default_r4=REAL(data_default, FLOAT_KIND)
+     call setup_one_field(fileObj, filename, fieldname, (/size(data,1), size(data,2), size(data,3), 1/), &
+                          index_field, domain, mandatory, no_domain, is_compressed, &
+                          position, tile_count, data_default_r4, longname, units, compressed_axis, &
+                          read_only=read_only, owns_data=restart_owns_data)
+  else
+     call setup_one_field(fileObj, filename, fieldname, (/size(data,1), size(data,2), size(data,3), 1/), &
+                          index_field, domain, mandatory, no_domain, is_compressed, &
+                          position, tile_count, longname=longname, units=units, compressed_axis=compressed_axis, &
+                          read_only=read_only, owns_data=restart_owns_data)
+  endif
+
   fileObj%p3dr8(fileObj%var(index_field)%siz(4), index_field)%p => data
   fileObj%var(index_field)%ndim = 3
   register_restart_field_r3d8 = index_field
@@ -3274,14 +3291,12 @@ subroutine save_default_restart(fileObj,restartpath)
               else if( Associated(fileObj%p3dr(k,j)%p) ) then
                  call mpp_write(unit, cur_var%field, array_domain(cur_var%domain_idx), fileObj%p3dr(k,j)%p, tlev, &
                                 default_data=cur_var%default_data)
-#ifndef MAPL_MODE
               else if( Associated(fileObj%p2dr8(k,j)%p) ) then
                  call mpp_write(unit, cur_var%field, array_domain(cur_var%domain_idx), fileObj%p2dr8(k,j)%p, tlev_r8, &
                                 default_data=real(cur_var%default_data,kind=DOUBLE_KIND))
               else if( Associated(fileObj%p3dr8(k,j)%p) ) then
                  call mpp_write(unit, cur_var%field, array_domain(cur_var%domain_idx), fileObj%p3dr8(k,j)%p, tlev_r8, &
                                 default_data=real(cur_var%default_data,kind=DOUBLE_KIND))
-#endif
               else if( Associated(fileObj%p4dr(k,j)%p) ) then
                  call mpp_write(unit, cur_var%field, array_domain(cur_var%domain_idx), fileObj%p4dr(k,j)%p, tlev, &
                                 default_data=cur_var%default_data)
@@ -4090,7 +4105,6 @@ subroutine restore_state_all(fileObj, directory, nonfatal_missing_files)
                        call mpp_read(unit(n), fields(l), array_domain(domain_idx), fileObj%p3dr(k,j)%p, tlev)
                        if ( is_there_a_checksum ) &
                          checksum_data = mpp_chksum(fileObj%p3dr(k,j)%p(cur_var%is:cur_var%is+iadd,cur_var%js:cur_var%js+jadd, :) )
-#ifndef MAPL_MODE
                     else if( Associated(fileObj%p2dr8(k,j)%p) ) then
                        call mpp_read(unit(n), fields(l), array_domain(domain_idx), fileObj%p2dr8(k,j)%p, tlev)
                        if ( is_there_a_checksum ) &
@@ -4099,7 +4113,6 @@ subroutine restore_state_all(fileObj, directory, nonfatal_missing_files)
                        call mpp_read(unit(n), fields(l), array_domain(domain_idx), fileObj%p3dr8(k,j)%p, tlev)
                        if ( is_there_a_checksum ) &
                          checksum_data = mpp_chksum(fileObj%p3dr8(k,j)%p(cur_var%is:cur_var%is+iadd,cur_var%js:cur_var%js+jadd, :) )
-#endif
                     else if( Associated(fileObj%p4dr(k,j)%p) ) then
                        call mpp_read(unit(n), fields(l), array_domain(domain_idx), fileObj%p4dr(k,j)%p, tlev)
                        if ( is_there_a_checksum ) &
@@ -5966,7 +5979,7 @@ subroutine read_data_2d_UG(filename,fieldname,data,SG_domain,UG_domain,timelevel
   type(domainUG), intent(in)                   :: UG_domain
   integer, intent(in) , optional               :: timelevel
   real, dimension(:,:), allocatable            :: data_2d
-  integer :: is, ie, js, je  
+  integer :: is, ie, js, je
 
   call mpp_get_compute_domain(SG_domain, is, ie, js, je)
   allocate(data_2d(is:ie,js:je))
