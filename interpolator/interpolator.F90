@@ -489,6 +489,56 @@ logical,          intent(out), optional :: single_year_file
 !  clim_type  :: An interpolate type containing the necessary file and field data to be passed to the interpolator routine.
 !  clim_units :: A list of the units for the components listed in data_names.
 !
+integer :: io, ierr
+logical :: the_file_exists
+
+if (.not. module_is_initialized) then
+  call fms_init
+  call diag_manager_init
+  call horiz_interp_init
+
+!--------------------------------------------------------------------
+! namelist input
+!--------------------------------------------------------------------
+
+  read (input_nml_file, nml=interpolator_nml, iostat=io)
+  ierr = check_nml_error(io,'interpolator_nml')
+
+!---------------------------------------------------------------------
+!    write version number and namelist to logfile.
+!---------------------------------------------------------------------
+call write_version_number("INTERPOLATOR_MOD", version)
+
+if (mpp_pe() == mpp_root_pe() ) write (stdlog(), nml=interpolator_nml)
+
+module_is_initialized = .true.
+
+endif !> if (module_is_initilized)
+if (use_mpp_io) then
+   call mpp_error(FATAL, "Interpolator::nml=interpolator_nml " //&
+           'MPP_IO is no longer supported.  Please remove from use_mpp_io from interpolator_nml')
+endif
+
+call fms2io_interpolator_init(clim_type, file_name, lonb_mod, latb_mod, &
+                              data_names, data_out_of_bounds,           &
+                              vert_interp, clim_units, single_year_file)
+
+end subroutine interpolator_init
+
+subroutine fms2io_interpolator_init(clim_type, file_name, lonb_mod, latb_mod, &
+                              data_names, data_out_of_bounds,           &
+                              vert_interp, clim_units, single_year_file)
+
+type(interpolate_type), intent(inout) :: clim_type
+character(len=*), intent(in)            :: file_name
+real            , intent(in)            :: lonb_mod(:,:), latb_mod(:,:)
+character(len=*), intent(in) , optional :: data_names(:)
+!++lwh
+integer         , intent(in)            :: data_out_of_bounds(:)
+integer         , intent(in), optional  :: vert_interp(:)
+!--lwh
+character(len=*), intent(out), optional :: clim_units(:)
+logical,          intent(out), optional :: single_year_file
 
 integer                      :: unit
 character(len=64)            :: src_file

@@ -316,53 +316,48 @@ contains
 
 !#######################################################################
 
-! <SUBROUTINE NAME="fms_init">
-
-!   <OVERVIEW>
-!     Initializes the FMS module and also calls the initialization routines for all
-!     modules in the MPP package. Will be called automatically if the user does
-!     not call it.
-!   </OVERVIEW>
-!   <DESCRIPTION>
-!      Initialization routine for the fms module. It also calls initialization routines
-!      for the mpp, mpp_domains, and mpp_io modules. Although this routine
-!      will be called automatically by other fms_mod routines, users should
-!      explicitly call fms_init. If this routine is called more than once it will
-!      return silently. There are no arguments.
-!   </DESCRIPTION>
-!   <TEMPLATE>
-!     call fms_init ( )
-!   </TEMPLATE>
-
-
-!   <ERROR MSG="invalid entry for namelist variable warning_level" STATUS="FATAL">
-!     The namelist variable warning_level must be either 'fatal' or 'warning'
-!     (case-insensitive).
-!   </ERROR>
-!   <ERROR MSG="invalid entry for namelist variable clock_grain" STATUS="FATAL">
-!     The namelist variable clock_grain must be one of the following values:
-!     'NONE', 'COMPONENT', 'SUBCOMPONENT', 'MODULE_DRIVER', 'MODULE', 'ROUTINE',
-!     'LOOP', or 'INFRA' (case-insensitive).
-!   </ERROR>
-
-! initializes the fms module/package
-! also calls mpp initialization routines and reads fms namelist
-
-subroutine fms_init (localcomm )
+!> @brief Initializes the FMS module and also calls the initialization routines for all
+!!     modules in the MPP package. Will be called automatically if the user does
+!!     not call it.
+!! @details Initialization routine for the fms module. It also calls initialization routines
+!!      for the mpp, mpp_domains, and mpp_io modules. Although this routine
+!!      will be called automatically by other fms_mod routines, users should
+!!      explicitly call fms_init. If this routine is called more than once it will
+!!      return silently. There are no arguments.
+!!
+!> @throws FATAL, invalid entry for namelist variable warning_level
+!! The namelist variable warning_level must be either 'fatal' or 'warning'(case-insensitive)
+!!
+!> @throws FATAL, invalid entry for namelist variable clock_grain
+!! The namelist variable clock_grain must be one of the following values:
+!! 'NONE', 'COMPONENT', 'SUBCOMPONENT', 'MODULE_DRIVER', 'MODULE', 'ROUTINE',
+!! 'LOOP', or 'INFRA' (case-insensitive).
+subroutine fms_init (localcomm, alt_input_nml_path)
 
 !--- needed to output the version number of constants_mod to the logfile ---
  use constants_mod, only: constants_version=>version !pjp: PI not computed
 
  integer, intent(in), optional :: localcomm
+ character(len=*), intent(in), optional :: alt_input_nml_path
  integer :: unit, ierr, io
+ integer :: logunitnum
+ integer :: stdout_unit !< Unit number for the stdout file
 
     if (module_is_initialized) return    ! return silently if already called
     module_is_initialized = .true.
 !---- initialize mpp routines ----
     if(present(localcomm)) then
-       call mpp_init(localcomm=localcomm)
+       if(present(alt_input_nml_path)) then
+          call mpp_init(localcomm=localcomm, alt_input_nml_path=alt_input_nml_path)
+       else
+          call mpp_init(localcomm=localcomm)
+       endif
     else
-       call mpp_init()
+       if(present(alt_input_nml_path)) then
+          call mpp_init(alt_input_nml_path=alt_input_nml_path)
+       else
+          call mpp_init()
+       endif
     endif
     call mpp_domains_init
     call fms_io_init
@@ -658,6 +653,41 @@ end subroutine fms_end
 ! used to check the iostat argument that is
 ! returned after reading a namelist
 ! see the online documentation for how this routine might be used
+
+  !> @brief Checks the iostat argument that is returned after reading a namelist
+  !!     and determines if the error code is valid.
+  !! @return This function returns the input iostat value (integer) if it is an
+  !!     allowable error code. If the iostat error code is not
+  !!     allowable, an error message is printed and the program terminated.
+  !! @details The FMS allows multiple namelist records to reside in the same file.
+  !!     Use this interface to check the iostat argument that is returned after
+  !!     reading a record from the namelist file. If an invalid iostat value
+  !!     is detected this routine will produce a fatal error. See the NOTE below.
+  !!
+  !!     Some compilers will return non-zero iostat values when reading through
+  !!     files with multiple namelist. This routine
+  !!     will try skip these errors and only terminate for true namelist errors.
+  !!
+  !!     <br>Examples<br>
+  !!
+  !!       The following example checks if a file exists, reads a namelist input
+  !!       from that file, and checks for errors in that
+  !!       namelist. When the correct namelist is read and it has no errors the
+  !!       routine check_nml_error will return zero and the while loop will exit.
+  !!       This code segment should be used to read namelist files.
+  !!       @code{.F90}
+  !!         integer :: ierr, io
+  !!
+  !!         read (input_nml_file, fms_nml, iostat=io)
+  !!         ierr = check_nml_error(io,'fms_nml')
+  !!       @endcode
+  !! @throws FATAL, Unknown error while reading namelist ...., (IOSTAT = ####)
+  !! There was an error reading the namelist specified. Carefully examine all namelist and variables
+  !! for anything incorrect (e.g. malformed, hidden characters).
+  !!
+  !! @throws FATAL, Unknown namelist, or mistyped namelist variable in namelist ...., (IOSTAT = ####)
+  !! The name list given doesn't exist in the namelist file, or a variable in the namelist is
+  !! mistyped or isn't a namelist variable.
   INTEGER FUNCTION check_nml_error(IOSTAT, NML_NAME)
     INTEGER, INTENT(in) :: IOSTAT
     CHARACTER(len=*), INTENT(in) :: NML_NAME
