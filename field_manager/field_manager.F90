@@ -280,8 +280,8 @@ integer, parameter, public :: fm_path_name_len  = 512
 ! <DATA NAME="fm_path_name_len" TYPE="integer, parameter" DEFAULT="512">
 !   The length of a character string representing the field path.
 ! </DATA>
-integer, parameter, public :: fm_string_len     = 128
-! <DATA NAME="fm_string_len" TYPE="integer, parameter" DEFAULT="128">
+integer, parameter, public :: fm_string_len     = 1024
+! <DATA NAME="fm_string_len" TYPE="integer, parameter" DEFAULT="1024">
 !   The length of a character string representing character values for the field.
 ! </DATA>
 integer, parameter, public :: fm_type_name_len  = 8
