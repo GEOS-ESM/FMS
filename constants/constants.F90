@@ -33,7 +33,7 @@
 !!    Constants can be used on the right side on an assignment statement
 !!    (their value can not be reassigned).
 !!
-!!    Example: 
+!!    Example:
 !!
 !! @verbatim
 !!    use constants_mod, only:  TFREEZE, grav_new => GRAV
@@ -64,24 +64,24 @@ public :: version
 real :: realnumber !< dummy variable to use in HUGE initializations
 
 #ifdef MAPL_MODE
-real,               public, parameter :: RADIUS   = 6371.0E3
-real(kind=r8_kind), public, parameter :: PI_8     = 3.14159265358979323846_r8_kind
-real,               public, parameter :: PI       = PI_8
-real,               public, parameter :: OMEGA    = 2.0*PI/86164.0
-real,               public, parameter :: GRAV     = 9.80665
-real,               public, parameter :: RDGAS    = 8314.47/28.965
-real,               public, parameter :: RVGAS    = 8314.47/18.015
-real,               public, parameter :: KAPPA    = RDGAS/(3.5*RDGAS)
-real,               public, parameter :: CP_VAPOR = 4.0*RVGAS
-real,               public, parameter :: DENS_H2O = 1000.
-real,               public, parameter :: HLV      = 2.4665E6
-real,               public, parameter :: HLF      = 3.3370E5
-real,               public, parameter :: TFREEZE  = 273.16
-real,               public, parameter :: CP_AIR   = RDGAS/KAPPA      !< Specific heat capacity of dry air at constant pressure [J/kg/deg]
-real,               public, parameter :: EPSLN    = 1.0e-40      !< A small number to prevent divide by zero exceptions [N/A]
-real,               public, parameter :: WTMAIR   = 2.896440E+01   !< Molecular weight of air [AMU]
-real,               public, parameter :: WTMCO2   = 44.00995      !< Molecular weight of carbon dioxide [AMU]
-real,               public, parameter :: KELVIN   = 273.16    !< Degrees Kelvin at zero Celsius [K]
+real,               public, parameter :: RADIUS   = 6371.0E3          !< Radius of the Earth [m]
+real(kind=r8_kind), public, parameter :: PI_8     = 3.14159265358979323846_r8_kind !< Ratio of circle circumference to diameter [N/A]
+real,               public, parameter :: PI       = PI_8              !< Ratio of circle circumference to diameter [N/A]
+real,               public, parameter :: OMEGA    = 2.0*PI/86164.0    !< Rotation rate of the Earth [1/s]
+real,               public, parameter :: GRAV     = 9.80665           !< Acceleration due to gravity [m/s^2]
+real,               public, parameter :: RDGAS    = 8314.47/28.965    !< Gas constant for dry air [J/kg/deg]
+real,               public, parameter :: RVGAS    = 8314.47/18.015    !< Gas constant for water vapor [J/kg/deg]
+real,               public, parameter :: KAPPA    = RDGAS/(3.5*RDGAS) !< RDGAS / (3.5*RDGAS) [dimensionless]
+real,               public, parameter :: CP_VAPOR = 4.0*RVGAS         !< Specific heat capacity of water vapor at constant pressure [J/kg/deg]
+real,               public, parameter :: DENS_H2O = 1000.             !< Density of liquid water [kg/m^3]
+real,               public, parameter :: HLV      = 2.4665E6          !< Latent heat of evaporation [J/kg]
+real,               public, parameter :: HLF      = 3.3370E5          !< Latent heat of fusion [J/kg]
+real,               public, parameter :: TFREEZE  = 273.16            !< Freezing temperature of fresh water [K]
+real,               public, parameter :: CP_AIR   = RDGAS/KAPPA       !< Specific heat capacity of dry air at constant pressure [J/kg/deg]
+real,               public, parameter :: EPSLN    = 1.0e-40           !< A small number to prevent divide by zero exceptions [N/A]
+real,               public, parameter :: WTMAIR   = 2.896440E+01      !< Molecular weight of air [AMU]
+real,               public, parameter :: WTMCO2   = 44.00995          !< Molecular weight of carbon dioxide [AMU]
+real,               public, parameter :: KELVIN   = 273.16            !< Degrees Kelvin at zero Celsius [K]
 #else
 
 !! The small_fac parameter is used to alter the radius of the earth to allow one to

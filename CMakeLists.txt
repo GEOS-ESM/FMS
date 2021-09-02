@@ -62,6 +62,10 @@ option(ENABLE_QUAD_PRECISION "Enable compiler definition -DENABLE_QUAD_PRECISION
 option(GFS_PHYS              "Enable compiler definition -DGFS_PHYS"              OFF)
 option(LARGEFILE             "Enable compiler definition -Duse_LARGEFILE"         OFF)
 
+# GEOS support
+option(MAPL_MODE             "Enable compiler definition -DMAPL_MODE"             OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 if(32BIT)
   list(APPEND kinds "r4")
 endif()
@@ -198,6 +202,11 @@ endif()
 # Additional (optional) compiler definitions
 if(GFS_PHYS)
   list(APPEND fms_defs GFS_PHYS)
+endif()
+
+# GEOS support
+if(MAPL_MODE)
+  list(APPEND fms_defs MAPL_MODE)
 endif()
 
 if(INTERNAL_FILE_NML)
