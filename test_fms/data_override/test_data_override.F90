@@ -45,7 +45,7 @@ program test
   ! /archive/pjp/unit_tests/test_data_override/lima/exp1
  use           mpp_mod, only: input_nml_file, stdout, mpp_chksum
  use   mpp_domains_mod, only: domain2d, mpp_define_domains, mpp_define_io_domain, mpp_get_compute_domain, mpp_define_layout
- use           fms_mod, only: fms_init, fms_end, mpp_npes, file_exist, open_namelist_file, check_nml_error, close_file
+ use           fms_mod, only: fms_init, fms_end, mpp_npes, file_exist, check_nml_error
  use           fms_mod, only: error_mesg, FATAL, file_exist, field_exist, field_size
  use  fms_affinity_mod, only: fms_affinity_set
  use        fms_io_mod, only: read_data, fms_io_exit
@@ -55,7 +55,7 @@ program test
  use  diag_manager_mod, only: send_data, diag_axis_init
  use data_override_mod, only: data_override_init, data_override, data_override_UG
   use mpp_mod,         only : FATAL, WARNING, MPP_DEBUG, NOTE, MPP_CLOCK_SYNC,MPP_CLOCK_DETAILED
-  use mpp_mod,         only : mpp_pe, mpp_npes, mpp_node, mpp_root_pe, mpp_error, mpp_set_warn_level
+  use mpp_mod,         only : mpp_pe, mpp_npes, mpp_root_pe, mpp_error, mpp_set_warn_level
   use mpp_mod,         only : mpp_declare_pelist, mpp_set_current_pelist, mpp_sync, mpp_sync_self
   use mpp_mod,         only : mpp_clock_begin, mpp_clock_end, mpp_clock_id
   use mpp_mod,         only : mpp_init, mpp_exit, mpp_chksum, stdout, stderr
@@ -87,8 +87,7 @@ program test
   use mpp_domains_mod, only : mpp_get_UG_compute_domain, mpp_pass_SG_to_UG, mpp_pass_UG_to_SG
   use mpp_domains_mod, only : mpp_get_ug_global_domain, mpp_global_field_ug
   use mpp_memutils_mod, only : mpp_memuse_begin, mpp_memuse_end
-
-#include "../../include/fms_platform.h"
+  use platform_mod
 
  implicit none
 
@@ -104,7 +103,7 @@ program test
  real, allocatable, dimension(:,:) :: lon, lat
  real, allocatable, dimension(:,:) :: sst, ice
  integer                           :: id_x, id_y, id_lon, id_lat, id_sst, id_ice
- integer                           :: i, j, is, ie, js, je, unit, io, ierr, n
+ integer                           :: i, j, is, ie, js, je, io, ierr, n
  real                              :: rad_to_deg
  character(len=36)                 :: message
  type(time_type)                   :: Time
@@ -127,20 +126,8 @@ program test
 
  rad_to_deg = 180./pi
 
-#ifdef INTERNAL_FILE_NML
-      read (input_nml_file, test_data_override_nml, iostat=io)
-      ierr = check_nml_error(io, 'test_data_override_nml')
-#else
- if (file_exist('input.nml')) then
-   unit = open_namelist_file ( )
-   ierr=1
-   do while (ierr /= 0)
-     read(unit, nml=test_data_override_nml, iostat=io, end=10)
-          ierr = check_nml_error(io, 'test_data_override_nml')
-   enddo
-10 call close_file (unit)
- endif
-#endif
+ read (input_nml_file, test_data_override_nml, iostat=io)
+ ierr = check_nml_error(io, 'test_data_override_nml')
 
  if(field_exist(grid_file, "x_T" ) ) then
     call field_size(grid_file, 'x_T', siz)
@@ -396,7 +383,6 @@ contains
 
   integer :: pe, npes
   integer :: nx, ny, nz=40, stackmax=4000000
-  integer :: unit=7
   integer :: stdunit = 6
   logical :: debug=.FALSE., opened
 
@@ -664,7 +650,7 @@ contains
   subroutine compare_checksums( a, b, string )
     real, intent(in), dimension(:,:,:) :: a, b
     character(len=*), intent(in) :: string
-    integer(LONG_KIND) :: sum1, sum2
+    integer(i8_kind) :: sum1, sum2
     integer :: i, j, k,pe
 
     ! z1l can not call mpp_sync here since there might be different number of tiles on each pe.
@@ -709,7 +695,7 @@ contains
   subroutine compare_checksums_2D( a, b, string )
     real, intent(in), dimension(:,:) :: a, b
     character(len=*), intent(in) :: string
-    integer(LONG_KIND) :: sum1, sum2
+    integer(i8_kind) :: sum1, sum2
     integer :: i, j,pe
 
     ! z1l can not call mpp_sync here since there might be different number of tiles on each pe.

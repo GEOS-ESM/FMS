@@ -41,11 +41,6 @@ module mpp_pset_mod
   logical :: verbose=.FALSE.
   logical :: module_is_initialized=.FALSE.
   character(len=256) :: text
-#ifdef use_SGI_GSM
-#include <mpp/shmem.fh>
-  integer :: pSync(SHMEM_BARRIER_SYNC_SIZE)
-  pointer( p_pSync, pSync ) !used by SHPALLOC
-#endif
 !generic interfaces
   interface mpp_pset_broadcast_ptr
      module procedure mpp_pset_broadcast_ptr_scalar
@@ -68,9 +63,6 @@ module mpp_pset_mod
 !public type
   type :: mpp_pset_type
      private
-#ifdef IBM_FIX
-     sequence
-#endif
      integer :: npset !number of PSETs
      integer :: next_in_pset, prev_in_pset !next and prev PE in PSET (cyclic)
      integer :: root_in_pset !PE designated to be the root within PSET
@@ -78,10 +70,10 @@ module mpp_pset_mod
      integer :: pos !position of current PE within pset
 !stack is allocated by root
 !it is then mapped to mpp_pset_stack by mpp_pset_broadcast_ptr
-     real, _ALLOCATABLE :: stack(:) _NULL
-     integer, _ALLOCATABLE :: pelist(:) _NULL !base PElist
-     integer, _ALLOCATABLE :: root_pelist(:) _NULL !a PElist of all the roots
-     integer, _ALLOCATABLE :: pset(:) _NULL !PSET IDs
+     real, allocatable :: stack(:)
+     integer, allocatable :: pelist(:) !base PElist
+     integer, allocatable :: root_pelist(:) !a PElist of all the roots
+     integer, allocatable :: pset(:) !PSET IDs
      integer(POINTER_KIND) :: p_stack
      integer :: lstack, maxstack, hiWM !current stack length, max, hiWM
      integer :: commID
@@ -101,23 +93,6 @@ module mpp_pset_mod
 
 contains
   subroutine mpp_pset_init
-#ifdef use_SGI_GSM
-    integer :: err
-#ifdef sgi_mipspro
-    character(len=8) :: value !won't be read
-    integer :: lenname, lenval!won't be read
-#endif
-    if( module_is_initialized )return
-!this part needs to be called _all_ PEs
-    call SHMEM_BARRIER_ALL()
-    call SHPALLOC( p_pSync, SHMEM_BARRIER_SYNC_SIZE, err, -1 )
-    call SHMEM_BARRIER_ALL()
-#ifdef sgi_mipspro
-    call PXFGETENV( 'SMA_GLOBAL_ALLOC', 0, value, lenval, err )
-    if( err.NE.0 )call mpp_error( FATAL, &
-         'The environment variable SMA_GLOBAL_ALLOC must be set on Irix.' )
-#endif
-#endif
     module_is_initialized = .TRUE.
   end subroutine mpp_pset_init
 
@@ -293,38 +268,6 @@ contains
 !modifies the received pointer to correct numerical address
     integer(POINTER_KIND), intent(inout) :: ptr
     integer, intent(in) :: pe
-#ifdef use_SGI_GSM
-!from the MPI_SGI_GLOBALPTR manpage
-!            POINTER(global_ptr, global_addr)
-!            INTEGER rem_rank, comm, ierror
-!            INTEGER(KIND=MPI_ADDRESS_KIND) rem_addr, size, global_addr
-!
-!            CALL MPI_SGI_GLOBALPTR(rem_addr, size, rem_rank, comm, global_ptr, ierror)
-    real :: dummy
-    pointer( p, dummy )
-    integer :: ierror
-!length goes in the second argument to MPI_SGI_GLOBALPTR
-!    according to Kim Mcmahon, this is only used to ensure the requested array
-!    length is within the valid memory-mapped region. We do not have access to
-!    the actual array length, so we are only going to set it to 1. This might
-!    unexpectedly fail on some large model.
-    integer(POINTER_KIND) :: length=1
-#ifdef sgi_mipspro
-    return !no translation needed on sgi_mipspro if SMA_GLOBAL_ALLOC is set
-#endif
-#ifdef use_libMPI
-!the MPI communicator was stored in pset%commID
-!since this routine doesn't take a pset argument, we let the caller store
-!it in the module global variable commID (see broadcast_ptr and check_ptr)
-    p = ptr
-    call MPI_SGI_GLOBALPTR( dummy, length, pe, commID, ptr, ierror )
-    if( ierror.EQ.-1 )call mpp_error( FATAL, &
-         'MPP_TRANSLATE_REMOTE_PTR: unknown MPI_SGI_GLOBALPTR error.' )
-#else
-    call mpp_error( FATAL, &
-         'MPP_TRANSLATE_REMOTE_PTR now only works under -Duse_libMPI' )
-#endif
-#endif
     return
   end subroutine mpp_translate_remote_ptr
 
@@ -335,14 +278,9 @@ contains
 
     if( .NOT.pset%initialized )call mpp_error( FATAL, &
          'MPP_PSET_SYNC: called with uninitialized PSET.' )
-#ifdef use_SGI_GSM
-!assumes npset contiguous PEs starting with root_in_pset
-    call SHMEM_BARRIER( pset%root_in_pset, 0, pset%npset, pSync )
-#else
 !currently does mpp_sync!!! slow!!!
 !try and make a lightweight pset sync
     call mpp_sync
-#endif
   end subroutine mpp_pset_sync
 
   subroutine mpp_pset_broadcast(pset,a)

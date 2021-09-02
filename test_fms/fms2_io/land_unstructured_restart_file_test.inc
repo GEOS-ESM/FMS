@@ -1,3 +1,22 @@
+!***********************************************************************
+!*                   GNU Lesser General Public License
+!*
+!* This file is part of the GFDL Flexible Modeling System (FMS).
+!*
+!* FMS is free software: you can redistribute it and/or modify it under
+!* the terms of the GNU Lesser General Public License as published by
+!* the Free Software Foundation, either version 3 of the License, or (at
+!* your option) any later version.
+!*
+!* FMS is distributed in the hope that it will be useful, but WITHOUT
+!* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+!* FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+!* for more details.
+!*
+!* You should have received a copy of the GNU Lesser General Public
+!* License along with FMS.  If not, see <http://www.gnu.org/licenses/>.
+!***********************************************************************
+
 subroutine land_unstructured_restart_file(domain, nz, nt, debug_flag)
 
   type(domainug), intent(in), target :: domain
@@ -11,13 +30,13 @@ subroutine land_unstructured_restart_file(domain, nz, nt, debug_flag)
   integer :: s
   integer, dimension(:), allocatable :: s2
   integer :: nx
-  real(kind=real64), dimension(:), allocatable :: tile_data
-  real(kind=real64), dimension(:), allocatable :: lev_data
-  real(kind=real64), dimension(:,:), allocatable :: temperature_data
-  integer(kind=int64) :: out_chksum
+  real(kind=r8_kind), dimension(:), allocatable :: tile_data
+  real(kind=r8_kind), dimension(:), allocatable :: lev_data
+  real(kind=r8_kind), dimension(:,:), allocatable :: temperature_data
+  integer(kind=i8_kind) :: out_chksum
   integer :: ndims
   integer, dimension(:), allocatable :: dim_sizes
-  integer(kind=int64) :: in_chksum
+  integer(kind=i8_kind) :: in_chksum
   logical :: debug
   integer :: err
   integer :: i
@@ -70,13 +89,6 @@ subroutine land_unstructured_restart_file(domain, nz, nt, debug_flag)
   call open_check(open_file(fileobj, "land_unstructured.nc", "overwrite", &
                             domain, nc_format="classic", is_restart=.true.))
 
-  !Add some global attributes to the restart file.
-  call register_global_attribute(fileobj, "globalatt1", real(7., kind=real64))
-  call register_global_attribute(fileobj, "globalatt2", real(4., kind=real32))
-  call register_global_attribute(fileobj, "globalatt3", int(3, kind=int32))
-  call register_global_attribute(fileobj, "globalatt4", int(2, kind=int64))
-  call register_global_attribute(fileobj, "globalatt5", "some text")
-
   !Add dimensions and corresponding variables to the file.
   !Tile (unstructured domain "x" dimension).
   call register_axis(fileobj, "tile")
@@ -86,7 +98,7 @@ subroutine land_unstructured_restart_file(domain, nz, nt, debug_flag)
     tile_data(i) = 2.234 + 1.7567*i
   enddo
   call write_data(fileobj, "tile", tile_data)
-  call register_variable_attribute(fileobj, "tile", "units", "tile value")
+  call register_variable_attribute(fileobj, "tile", "units", "tile value", str_len=len_trim("tile value"))
 
   !Height.
   call register_axis(fileobj, "lev", nz)
@@ -96,17 +108,17 @@ subroutine land_unstructured_restart_file(domain, nz, nt, debug_flag)
     lev_data(i) = 0.1111 + 20.236*i
   enddo
   call write_data(fileobj, "lev", lev_data)
-  call register_variable_attribute(fileobj, "lev", "units", "mb")
+  call register_variable_attribute(fileobj, "lev", "units", "mb", str_len=len_trim("mb"))
 
   !Time.
   call register_axis(fileobj, "time", unlimited)
   call register_field(fileobj, "time", "float", (/"time"/))
-  call register_variable_attribute(fileobj, "time", "units", "seconds")
+  call register_variable_attribute(fileobj, "time", "units", "seconds", str_len=len_trim("seconds"))
 
   !Add a restart variable.
   call register_restart_field(fileobj, "temperature", temperature_data, &
                               (/"tile","lev ","time"/))
-  call register_variable_attribute(fileobj, "temperature", "units", "K")
+  call register_variable_attribute(fileobj, "temperature", "units", "K", str_len=len_trim("k"))
 
   !Initialize some random temperature data.
 
