@@ -33,7 +33,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FMS
-   &#160;<span id="projectnumber">2022.01.0-dev</span>
+   &#160;<span id="projectnumber">2021.04.0</span>
    </div>
    <div id="projectbrief">Flexible Modeling System</div>
   </td>
@@ -211,7 +211,7 @@ $(document).ready(function(){initNavTree('test__yaml__parser_8F90_source.html','
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">!! Try get_value_from_key using a r8 buffer</span></div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keyword">call </span><a class="code" href="interfaceyaml__parser__mod_1_1get__value__from__key.html">get_value_from_key</a>(yaml_file_id1, variable_ids(1), <span class="stringliteral">&quot;fill_value&quot;</span>, r8_buffer)</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="keywordflow">if</span> (abs(r8_buffer - real(-999.9, kind=r8_kind)) .gt. 5d-5) <span class="keyword">call </span><a class="code" href="interfacempp__mod_1_1mpp__error.html">mpp_error</a>(fatal, <span class="stringliteral">&quot;fill_value was not read correctly as an r8!&quot;</span>)</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="keywordflow">if</span> (r8_buffer .ne. real(-999.9, kind=r8_kind)) <span class="keyword">call </span><a class="code" href="interfacempp__mod_1_1mpp__error.html">mpp_error</a>(fatal, <span class="stringliteral">&quot;fill_value was not read correctly as an r8!&quot;</span>)</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">!! Try the is_optional argument on an key that does not exist</span></div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;string_buffer = <span class="stringliteral">&quot;&quot;</span></div>
