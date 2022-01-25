@@ -33,7 +33,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">FMS
-   &#160;<span id="projectnumber">2021.03.01</span>
+   &#160;<span id="projectnumber">2022.01.0-dev</span>
    </div>
    <div id="projectbrief">Flexible Modeling System</div>
   </td>
@@ -168,34 +168,14 @@ real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a cl
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga722fa6ded6947c860a32b171bd428926">tfreeze</a> = 273.16_r8_kind</td></tr>
 <tr class="memdesc:ga722fa6ded6947c860a32b171bd428926"><td class="mdescLeft">&#160;</td><td class="mdescRight">Freezing temperature of fresh water [K]. <br /></td></tr>
 <tr class="separator:ga722fa6ded6947c860a32b171bd428926"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga63b9020624ecc9f17a10e825b9a6b28c"><td class="memItemLeft" align="right" valign="top">
-real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga63b9020624ecc9f17a10e825b9a6b28c">dens_h2o</a> = 1000._r8_kind</td></tr>
-<tr class="memdesc:ga63b9020624ecc9f17a10e825b9a6b28c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Density of liquid water [kg/m^3]. <br /></td></tr>
-<tr class="separator:ga63b9020624ecc9f17a10e825b9a6b28c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5a927a40e431bf68f4de09f3bb24bdd6"><td class="memItemLeft" align="right" valign="top">
-real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga5a927a40e431bf68f4de09f3bb24bdd6">cp_vapor</a> = 4.0_r8_kind*RVGAS</td></tr>
-<tr class="memdesc:ga5a927a40e431bf68f4de09f3bb24bdd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specific heat capacity of water vapor at constant pressure [J/kg/deg]. <br /></td></tr>
-<tr class="separator:ga5a927a40e431bf68f4de09f3bb24bdd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga1764f0d57d4ec5a2c12847ab43a37b46"><td class="memItemLeft" align="right" valign="top">
-real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga1764f0d57d4ec5a2c12847ab43a37b46">epsln</a> = 1.0e-40_r8_kind</td></tr>
-<tr class="memdesc:ga1764f0d57d4ec5a2c12847ab43a37b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">A small number to prevent divide by zero exceptions [N/A]. <br /></td></tr>
-<tr class="separator:ga1764f0d57d4ec5a2c12847ab43a37b46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab23f730dda821e8eb0bb736a4175b745"><td class="memItemLeft" align="right" valign="top">
-real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gab23f730dda821e8eb0bb736a4175b745">wtmair</a> = 2.896440E+01_r8_kind</td></tr>
-<tr class="memdesc:gab23f730dda821e8eb0bb736a4175b745"><td class="mdescLeft">&#160;</td><td class="mdescRight">Molecular weight of air [AMU]. <br /></td></tr>
-<tr class="separator:gab23f730dda821e8eb0bb736a4175b745"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafbe270e0321839093a68d7c3263aadde"><td class="memItemLeft" align="right" valign="top">
-real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gafbe270e0321839093a68d7c3263aadde">wtmco2</a> = 44.00995_r8_kind</td></tr>
-<tr class="memdesc:gafbe270e0321839093a68d7c3263aadde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Molecular weight of carbon dioxide [AMU]. <br /></td></tr>
-<tr class="separator:gafbe270e0321839093a68d7c3263aadde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae06106cc214be9637d7d8836224705ba"><td class="memItemLeft" align="right" valign="top">
-real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gae06106cc214be9637d7d8836224705ba">kelvin</a> = 273.15_r8_kind</td></tr>
-<tr class="memdesc:gae06106cc214be9637d7d8836224705ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Degrees Kelvin at zero Celsius [K]. <br /></td></tr>
-<tr class="separator:gae06106cc214be9637d7d8836224705ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga57b0091805dc50cf1effeb71673f4b27"><td class="memItemLeft" align="right" valign="top">
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga57b0091805dc50cf1effeb71673f4b27">stefan</a> = 5.6734e-8_r8_kind</td></tr>
 <tr class="memdesc:ga57b0091805dc50cf1effeb71673f4b27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stefan-Boltzmann constant [W/m^2/deg^4]. <br /></td></tr>
 <tr class="separator:ga57b0091805dc50cf1effeb71673f4b27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5a927a40e431bf68f4de09f3bb24bdd6"><td class="memItemLeft" align="right" valign="top">
+real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga5a927a40e431bf68f4de09f3bb24bdd6">cp_vapor</a> = 4.0_r8_kind*RVGAS</td></tr>
+<tr class="memdesc:ga5a927a40e431bf68f4de09f3bb24bdd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specific heat capacity of water vapor at constant pressure [J/kg/deg]. <br /></td></tr>
+<tr class="separator:ga5a927a40e431bf68f4de09f3bb24bdd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae497e900211e5d9cab6dcfca0fbd18e2"><td class="memItemLeft" align="right" valign="top">
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gae497e900211e5d9cab6dcfca0fbd18e2">cp_ocean</a> = 3989.24495292815_r8_kind</td></tr>
 <tr class="memdesc:gae497e900211e5d9cab6dcfca0fbd18e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specific heat capacity taken from McDougall (2002) "Potential Enthalpy ..." [J/kg/deg]. <br /></td></tr>
@@ -216,10 +196,18 @@ real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a cl
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gaea84f20fd703211bdf44a90df49df101">es0</a> = 1.0_r8_kind</td></tr>
 <tr class="memdesc:gaea84f20fd703211bdf44a90df49df101"><td class="mdescLeft">&#160;</td><td class="mdescRight">Humidity factor. Controls the humidity content of the atmosphere through the Saturation Vapour Pressure expression when using DO_SIMPLE. [dimensionless]. <br /></td></tr>
 <tr class="separator:gaea84f20fd703211bdf44a90df49df101"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga63b9020624ecc9f17a10e825b9a6b28c"><td class="memItemLeft" align="right" valign="top">
+real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga63b9020624ecc9f17a10e825b9a6b28c">dens_h2o</a> = 1000._r8_kind</td></tr>
+<tr class="memdesc:ga63b9020624ecc9f17a10e825b9a6b28c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Density of liquid water [kg/m^3]. <br /></td></tr>
+<tr class="separator:ga63b9020624ecc9f17a10e825b9a6b28c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaee560f69bb87a8369d04fcba967ee9bd"><td class="memItemLeft" align="right" valign="top">
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gaee560f69bb87a8369d04fcba967ee9bd">hls</a> = HLV + HLF</td></tr>
 <tr class="memdesc:gaee560f69bb87a8369d04fcba967ee9bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latent heat of sublimation [J/kg]. <br /></td></tr>
 <tr class="separator:gaee560f69bb87a8369d04fcba967ee9bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab23f730dda821e8eb0bb736a4175b745"><td class="memItemLeft" align="right" valign="top">
+real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gab23f730dda821e8eb0bb736a4175b745">wtmair</a> = 2.896440E+01_r8_kind</td></tr>
+<tr class="memdesc:gab23f730dda821e8eb0bb736a4175b745"><td class="mdescLeft">&#160;</td><td class="mdescRight">Molecular weight of air [AMU]. <br /></td></tr>
+<tr class="separator:gab23f730dda821e8eb0bb736a4175b745"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad2d5fa3593c722a5eca4853a4f1dbd7b"><td class="memItemLeft" align="right" valign="top">
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gad2d5fa3593c722a5eca4853a4f1dbd7b">wtmh2o</a> = WTMAIR*(RDGAS/RVGAS)</td></tr>
 <tr class="memdesc:gad2d5fa3593c722a5eca4853a4f1dbd7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Molecular weight of water [AMU]. <br /></td></tr>
@@ -232,6 +220,10 @@ real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a cl
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga0c8d6fd803ca0e58f78c16bde50cd252">wtmc</a> = 12.00000_r8_kind</td></tr>
 <tr class="memdesc:ga0c8d6fd803ca0e58f78c16bde50cd252"><td class="mdescLeft">&#160;</td><td class="mdescRight">Molecular weight of carbon [AMU]. <br /></td></tr>
 <tr class="separator:ga0c8d6fd803ca0e58f78c16bde50cd252"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafbe270e0321839093a68d7c3263aadde"><td class="memItemLeft" align="right" valign="top">
+real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gafbe270e0321839093a68d7c3263aadde">wtmco2</a> = 44.00995_r8_kind</td></tr>
+<tr class="memdesc:gafbe270e0321839093a68d7c3263aadde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Molecular weight of carbon dioxide [AMU]. <br /></td></tr>
+<tr class="separator:gafbe270e0321839093a68d7c3263aadde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6b4f7918dca63dd981e6019b57126ffc"><td class="memItemLeft" align="right" valign="top">
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga6b4f7918dca63dd981e6019b57126ffc">wtmch4</a> = 16.0425_r8_kind</td></tr>
 <tr class="memdesc:ga6b4f7918dca63dd981e6019b57126ffc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Molecular weight of methane [AMU]. <br /></td></tr>
@@ -296,6 +288,10 @@ real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a cl
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gaf1ab06f30722e194b2025a3392be7dd1">alogmin</a> = -50.0_r8_kind</td></tr>
 <tr class="memdesc:gaf1ab06f30722e194b2025a3392be7dd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum value allowed as argument to log function [N/A]. <br /></td></tr>
 <tr class="separator:gaf1ab06f30722e194b2025a3392be7dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1764f0d57d4ec5a2c12847ab43a37b46"><td class="memItemLeft" align="right" valign="top">
+real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga1764f0d57d4ec5a2c12847ab43a37b46">epsln</a> = 1.0e-40_r8_kind</td></tr>
+<tr class="memdesc:ga1764f0d57d4ec5a2c12847ab43a37b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">A small number to prevent divide by zero exceptions [N/A]. <br /></td></tr>
+<tr class="separator:ga1764f0d57d4ec5a2c12847ab43a37b46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaba6e84d2fb2dd7ec9d1df699b5264570"><td class="memItemLeft" align="right" valign="top">
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gaba6e84d2fb2dd7ec9d1df699b5264570">radcon</a> = ((1.0E+02*GRAV)/(1.0E+04*CP_AIR))*SECONDS_PER_DAY</td></tr>
 <tr class="memdesc:gaba6e84d2fb2dd7ec9d1df699b5264570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factor used to convert flux divergence to heating rate in degrees per day [deg sec/(cm day)]. <br /></td></tr>
@@ -320,6 +316,10 @@ real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a cl
 real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#ga1bcc8a1c8e486d640b8077d18551df72">c2dbars</a> = 1.e-4_r8_kind</td></tr>
 <tr class="memdesc:ga1bcc8a1c8e486d640b8077d18551df72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts rho*g*z (in mks) to dbars: 1dbar = 10^4 (kg/m^3)(m/s^2)m [dbars]. <br /></td></tr>
 <tr class="separator:ga1bcc8a1c8e486d640b8077d18551df72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae06106cc214be9637d7d8836224705ba"><td class="memItemLeft" align="right" valign="top">
+real, parameter, public&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__constants__mod.html#gae06106cc214be9637d7d8836224705ba">kelvin</a> = 273.15_r8_kind</td></tr>
+<tr class="memdesc:gae06106cc214be9637d7d8836224705ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Degrees Kelvin at zero Celsius [K]. <br /></td></tr>
+<tr class="separator:gae06106cc214be9637d7d8836224705ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>File for <a class="el" href="group__constants__mod.html">constants_mod</a>. </p>
