@@ -63,6 +63,10 @@ option(GFS_PHYS              "Enable compiler definition -DGFS_PHYS"            
 option(LARGEFILE             "Enable compiler definition -Duse_LARGEFILE"         OFF)
 option(WITH_YAML             "Enable compiler definition -Duse_yaml"              OFF)
 
+# GEOS support
+option(MAPL_MODE             "Enable compiler definition -DMAPL_MODE"             OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 if(32BIT)
   list(APPEND kinds "r4")
 endif()
@@ -212,6 +216,11 @@ endif()
 
 if(WITH_YAML)
   list(APPEND fms_defs use_yaml)
+endif()
+
+# GEOS support
+if(MAPL_MODE)
+  list(APPEND fms_defs MAPL_MODE)
 endif()
 
 if(INTERNAL_FILE_NML)
