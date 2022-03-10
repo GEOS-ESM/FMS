@@ -215,16 +215,14 @@ endforeach ()
 
 set (lib fms_${precision})
 
-esma_add_library (${lib} SRCS ${srcs} TYPE SHARED)
-target_link_libraries (${lib} PUBLIC ${NETCDF_LIBRARIES} ${MPI_Fortran_LIBRARIES})
+esma_add_library (${lib} SRCS ${srcs} DEPENDENCIES NetCDF::NetCDF_Fortran MPI::MPI_Fortran TYPE SHARED)
 
 target_include_directories (${lib} PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mpp/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fft>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fms>
 )
-target_include_directories (${lib} PUBLIC ${INC_NETCDF})
 
 file (COPY include/fms_platform.h DESTINATION ${include_${this}})
 file (COPY include/file_version.h DESTINATION ${include_${this}})
@@ -271,4 +269,4 @@ endif ()
 
 
 
-  
+
