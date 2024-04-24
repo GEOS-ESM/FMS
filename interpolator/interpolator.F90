@@ -514,10 +514,10 @@ if (mpp_pe() == mpp_root_pe() ) write (stdlog(), nml=interpolator_nml)
 module_is_initialized = .true.
 
 endif !> if (module_is_initilized)
-if (use_mpp_io) then
-   call mpp_error(FATAL, "Interpolator::nml=interpolator_nml " //&
-           'MPP_IO is no longer supported.  Please remove from use_mpp_io from interpolator_nml')
-endif
+!if (use_mpp_io) then
+!   call mpp_error(FATAL, "Interpolator::nml=interpolator_nml " //&
+!           'MPP_IO is no longer supported.  Please remove from use_mpp_io from interpolator_nml')
+!endif
 
 call fms2io_interpolator_init(clim_type, file_name, lonb_mod, latb_mod, &
                               data_names, data_out_of_bounds,           &
@@ -1311,7 +1311,7 @@ call write_version_number("INTERPOLATOR_MOD", version)
       if (mpp_pe() == mpp_root_pe() ) &
                           write (stdlog(), nml=interpolator_nml)
 
-end subroutine interpolator_init
+end subroutine fms2io_interpolator_init
 !
 !---------------------------------------------------------------------
 !
