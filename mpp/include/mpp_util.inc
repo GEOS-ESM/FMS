@@ -1365,6 +1365,7 @@ end function rarray_to_char
     endif
     lines_and_length = get_ascii_file_num_lines_and_length(filename)
     allocate(character(len=lines_and_length(2))::input_nml_file(lines_and_length(1)))
+    input_nml_file(:) = ' '
     call read_ascii_file(filename, lines_and_length(2), input_nml_file)
 
 ! write info logfile
@@ -1596,7 +1597,12 @@ end function rarray_to_char
                    do
                       read (UNIT=f_unit, FMT='(A)', IOSTAT=status) Content(pnum_lines)
 
-                      if ( status .lt. 0 ) exit
+                      if ( status .lt. 0 ) then
+                         ! https://github.com/NOAA-GFDL/FMS/blob/cb0c48a5194ff2119c93a0e7d71c5d84e8d637aa/mpp/include/mpp_util.inc#L1467C1-L1469C30
+                         ! deprecate pnum_lines by 1 and ensure pnum_lines is at least 1
+                         pnum_lines = max (pnum_lines - 1, 1)
+                         exit
+                      end if
                       if ( status .gt. 0 ) then
                          write (UNIT=text, FMT='(I5)') pnum_lines
                          call mpp_error(FATAL, 'READ_ASCII_FILE: Error reading line '//trim(text)//' in file '//trim(FILENAME)//'.')
