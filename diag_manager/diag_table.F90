@@ -231,7 +231,7 @@ MODULE diag_table_mod
   !   A simple utility has been created to help discover
   ! </DESCRIPTION>
   USE mpp_io_mod, ONLY: mpp_open, MPP_RDONLY
-  USE mpp_mod, ONLY: read_ascii_file, get_ascii_file_num_lines
+  USE mpp_mod, ONLY: read_ascii_file, get_ascii_file_num_lines_and_length
   USE fms_mod, ONLY: fms_error_handler, error_mesg, file_exist, stdlog, mpp_pe, mpp_root_pe, FATAL, WARNING, lowercase, close_file
   USE time_manager_mod, ONLY: get_calendar_type, NO_CALENDAR, set_date, set_time, month_name, time_type
   USE constants_mod, ONLY: SECONDS_PER_HOUR, SECONDS_PER_MINUTE
@@ -373,10 +373,12 @@ CONTAINS
     CHARACTER(len=9) :: amonth !< Month name
     CHARACTER(len=256) :: record_line !< Current line from the diag_table.
     CHARACTER(len=256) :: local_err_msg !< Sting to hold local error messages.
-    CHARACTER(len=DT_LINE_LENGTH), DIMENSION(:), ALLOCATABLE :: diag_table
+    CHARACTER(len=:), DIMENSION(:), ALLOCATABLE :: diag_table
 
     TYPE(file_description_type) :: temp_file
     TYPE(field_description_type) :: temp_field
+
+    integer, dimension(2) :: lines_and_length
 
     ! set up the pstat pointer
     IF ( PRESENT(istat) ) THEN
@@ -395,10 +397,11 @@ CONTAINS
 
     ! get the stdlog unit number
     stdlog_unit = stdlog()
-    num_lines = get_ascii_file_num_lines('diag_table', DT_LINE_LENGTH)
-    allocate(diag_table(num_lines))
+    lines_and_length = get_ascii_file_num_lines_and_length('diag_table')
+    allocate(character(len=lines_and_length(2)) :: diag_table(lines_and_length(1)))
 
-    call read_ascii_file('diag_table', DT_LINE_LENGTH, diag_table)
+    diag_table(:) = ' '
+    call read_ascii_file('diag_table', lines_and_length(2), diag_table)
 
     ! Read in the global file labeling string
     READ (UNIT=diag_table(1), FMT=*, IOSTAT=mystat) global_descriptor
