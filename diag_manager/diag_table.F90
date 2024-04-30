@@ -399,6 +399,8 @@ CONTAINS
     stdlog_unit = stdlog()
     lines_and_length = get_ascii_file_num_lines_and_length('diag_table')
     allocate(character(len=lines_and_length(2)) :: diag_table(lines_and_length(1)))
+    ! We also need to fill num_lines for a loop counter
+    num_lines = lines_and_length(2)
 
     diag_table(:) = ' '
     call read_ascii_file('diag_table', lines_and_length(2), diag_table)
