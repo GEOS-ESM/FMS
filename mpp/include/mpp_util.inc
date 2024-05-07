@@ -1461,7 +1461,7 @@ end function rarray_to_char
 
     if( read_ascii_file_on) then
        call mpp_error(FATAL,  &
-          "mpp_util.inc: get_ascii_file_num_lines is called again before calling read_ascii_file")
+          "mpp_util.inc: get_ascii_file_num_lines_and_length is called again before calling read_ascii_file")
     endif
     read_ascii_file_on = .true.
 
@@ -1477,7 +1477,7 @@ end function rarray_to_char
 
           if ( status .ne. 0 ) then
              write (UNIT=text, FMT='(I5)') status
-             call mpp_error(FATAL, 'get_ascii_file_num_lines: Error opening file:' //trim(FILENAME)// &
+             call mpp_error(FATAL, 'get_ascii_file_num_lines_and_length: Error opening file:' //trim(FILENAME)// &
                             '.  (IOSTAT = '//trim(text)//')')
           else
              num_lines = 1
@@ -1491,12 +1491,12 @@ end function rarray_to_char
                 endif
                 if ( status .gt. 0 ) then
                    write (UNIT=text, FMT='(I5)') num_lines
-                   call mpp_error(FATAL, 'get_ascii_file_num_lines: Error reading line '//trim(text)// &
+                   call mpp_error(FATAL, 'get_ascii_file_num_lines_and_length: Error reading line '//trim(text)// &
                         ' in file '//trim(FILENAME)//'.')
                 end if
                 if ( len_trim(str_tmp) == LENGTH ) then
                    write(UNIT=text, FMT='(I5)') length
-                   call mpp_error(FATAL, 'get_ascii_file_num_lines: Length of output string ('//trim(text)//&
+                   call mpp_error(FATAL, 'get_ascii_file_num_lines_and_length: Length of output string ('//trim(text)//&
                                        & ' is too small. Increase the LENGTH value.')
                 end if
                 if (len_trim(str_tmp) > max_length) max_length = len_trim(str_tmp)
@@ -1505,7 +1505,7 @@ end function rarray_to_char
              close(UNIT=f_unit)
           end if
        else
-          call mpp_error(FATAL, 'get_ascii_file_num_lines: File '//trim(FILENAME)//' does not exist.')
+          call mpp_error(FATAL, 'get_ascii_file_num_lines_and_length: File '//trim(FILENAME)//' does not exist.')
        end if
        max_length = max_length+1
     end if
