@@ -1554,6 +1554,7 @@ end function rarray_to_char
     integer :: status, i, f_unit, log_unit
     integer :: from_pe
     integer :: pnum_lines, num_lines
+    character(len=LENGTH) :: str_tmp
 
     if( .NOT. read_ascii_file_on) then
        call mpp_error(FATAL,  &
@@ -1595,7 +1596,7 @@ end function rarray_to_char
                    pnum_lines = 1
 
                    do
-                      read (UNIT=f_unit, FMT='(A)', IOSTAT=status) Content(pnum_lines)
+                      read (UNIT=f_unit, FMT='(A)', IOSTAT=status) str_tmp
 
                       if ( status .lt. 0 ) then
                          ! https://github.com/NOAA-GFDL/FMS/blob/cb0c48a5194ff2119c93a0e7d71c5d84e8d637aa/mpp/include/mpp_util.inc#L1467C1-L1469C30
@@ -1616,6 +1617,7 @@ end function rarray_to_char
                          call mpp_error(FATAL, 'READ_ASCII_FILE: Length of output string ('//trim(text)//' is too small.&
                               & Increase the LENGTH value.')
                       end if
+                      Content(pnum_lines) = str_tmp
                       pnum_lines = pnum_lines + 1
                    end do
                    if(num_lines .NE. pnum_lines) then
