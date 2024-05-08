@@ -1307,32 +1307,32 @@ end function rarray_to_char
 !
 ! THESE LINES MUST BE PRESENT IN MPP.F90
 !
-! ! parameter defining length of character variables
-!   integer, parameter :: INPUT_STR_LENGTH = 256
-! ! public variable needed for reading input.nml from an internal file
-!   character(len=INPUT_STR_LENGTH), dimension(:), allocatable, public :: input_nml_file
+! ! public variable needed for reading an input nml file from an internal file
+!   character(len=:), dimension(:), allocatable, public :: input_nml_file
 !
 
 !-----------------------------------------------------------------------
 ! subroutine READ_INPUT_NML
 !
 !
-! Reads an existing input.nml into a character array and broadcasts
+! Reads an existing input nml file into a character array and broadcasts
 ! it to the non-root mpi-tasks. This allows the use of reads from an
 ! internal file for namelist settings (requires 2003 compliant compiler)
 !
 ! read(input_nml_file, nml=<name_nml>, iostat=status)
 !
 !
-  subroutine read_input_nml(pelist_name_in)
+  subroutine read_input_nml(pelist_name_in, alt_input_nml_path)
 
 ! Include variable "version" to be written to log file.
 #include<file_version.h>
 
     character(len=*), intent(in), optional :: pelist_name_in
+    character(len=*), intent(in), optional :: alt_input_nml_path
 ! private variables
     integer :: log_unit
-    integer :: num_lines, i
+    integer :: i
+    integer, dimension(2) :: lines_and_length
     logical :: file_exist
     character(len=len(peset(current_peset_num)%name)) :: pelist_name
     character(len=128) :: filename
@@ -1357,11 +1357,16 @@ end function rarray_to_char
     filename='input_'//trim(pelist_name)//'.nml'
     inquire(FILE=filename, EXIST=file_exist)
     if (.not. file_exist ) then
-       filename='input.nml'
+       if (present(alt_input_nml_path)) then
+          filename = alt_input_nml_path
+       else
+          filename = 'input.nml'
+       end if
     endif
-    num_lines = get_ascii_file_num_lines(filename, INPUT_STR_LENGTH)
-    allocate(input_nml_file(num_lines))
-    call read_ascii_file(filename, INPUT_STR_LENGTH, input_nml_file)
+    lines_and_length = get_ascii_file_num_lines_and_length(filename)
+    allocate(character(len=lines_and_length(2))::input_nml_file(lines_and_length(1)))
+    input_nml_file(:) = ' '
+    call read_ascii_file(filename, lines_and_length(2), input_nml_file)
 
 ! write info logfile
     if (pe == root_pe) then
@@ -1369,7 +1374,7 @@ end function rarray_to_char
        write(log_unit,'(a)')  '========================================================================'
        write(log_unit,'(a)')  'READ_INPUT_NML: '//trim(version)
        write(log_unit,'(a)')  'READ_INPUT_NML: '//trim(filename)//' '
-       do i = 1, num_lines
+       do i = 1, lines_and_length(1)
           write(log_unit,*) trim(input_nml_file(i))
        enddo
     end if
@@ -1438,6 +1443,80 @@ end function rarray_to_char
     get_ascii_file_num_lines = num_lines
 
   end function get_ascii_file_num_lines
+
+  !#######################################################################
+  !> @brief Function to determine the maximum line length and number of lines from an ascii file
+  function get_ascii_file_num_lines_and_length(FILENAME, PELIST)
+    character(len=*), intent(in) :: FILENAME !< name of the file to be read
+    integer, intent(in), optional, dimension(:) :: PELIST !< optional pelist
+
+    integer, dimension(2) :: get_ascii_file_num_lines_and_length !< number of lines (1) and
+                                                                 !! max line length (2)
+    integer :: num_lines, max_length
+    integer, parameter :: LENGTH=1024
+    character(len=LENGTH) :: str_tmp
+    character(len=5) :: text
+    integer :: status, f_unit, from_pe
+    logical :: file_exist
+
+    if( read_ascii_file_on) then
+       call mpp_error(FATAL,  &
+          "mpp_util.inc: get_ascii_file_num_lines_and_length is called again before calling read_ascii_file")
+    endif
+    read_ascii_file_on = .true.
+
+    from_pe = root_pe
+    get_ascii_file_num_lines_and_length = -1
+    num_lines = -1
+    max_length = -1
+    if ( pe == root_pe ) then
+       inquire(FILE=FILENAME, EXIST=file_exist)
+
+       if ( file_exist ) then
+          open(newunit=f_unit, FILE=FILENAME, ACTION='READ', STATUS='OLD', IOSTAT=status)
+
+          if ( status .ne. 0 ) then
+             write (UNIT=text, FMT='(I5)') status
+             call mpp_error(FATAL, 'get_ascii_file_num_lines_and_length: Error opening file:' //trim(FILENAME)// &
+                            '.  (IOSTAT = '//trim(text)//')')
+          else
+             num_lines = 1
+             max_length = 1
+             do
+                read (UNIT=f_unit, FMT='(A)', IOSTAT=status) str_tmp
+                if ( status .lt. 0 ) then
+                   ! deprecate num_lines by 1 and ensure num_lines is at least 1
+                   num_lines = max (num_lines - 1, 1)
+                   exit
+                endif
+                if ( status .gt. 0 ) then
+                   write (UNIT=text, FMT='(I5)') num_lines
+                   call mpp_error(FATAL, 'get_ascii_file_num_lines_and_length: Error reading line '//trim(text)// &
+                        ' in file '//trim(FILENAME)//'.')
+                end if
+                if ( len_trim(str_tmp) == LENGTH ) then
+                   write(UNIT=text, FMT='(I5)') length
+                   call mpp_error(FATAL, 'get_ascii_file_num_lines_and_length: Length of output string ('//trim(text)//&
+                                       & ' is too small. Increase the LENGTH value.')
+                end if
+                if (len_trim(str_tmp) > max_length) max_length = len_trim(str_tmp)
+                num_lines = num_lines + 1
+             end do
+             close(UNIT=f_unit)
+          end if
+       else
+          call mpp_error(FATAL, 'get_ascii_file_num_lines_and_length: File '//trim(FILENAME)//' does not exist.')
+       end if
+       max_length = max_length+1
+    end if
+
+    ! Broadcast number of lines
+    call mpp_broadcast(num_lines, from_pe, PELIST=PELIST)
+    call mpp_broadcast(max_length, from_pe, PELIST=PELIST)
+    get_ascii_file_num_lines_and_length(1) = num_lines
+    get_ascii_file_num_lines_and_length(2) = max_length
+
+  end function get_ascii_file_num_lines_and_length
 
   !-----------------------------------------------------------------------
   !
@@ -1518,7 +1597,12 @@ end function rarray_to_char
                    do
                       read (UNIT=f_unit, FMT='(A)', IOSTAT=status) Content(pnum_lines)
 
-                      if ( status .lt. 0 ) exit
+                      if ( status .lt. 0 ) then
+                         ! https://github.com/NOAA-GFDL/FMS/blob/cb0c48a5194ff2119c93a0e7d71c5d84e8d637aa/mpp/include/mpp_util.inc#L1467C1-L1469C30
+                         ! deprecate pnum_lines by 1 and ensure pnum_lines is at least 1
+                         pnum_lines = max (pnum_lines - 1, 1)
+                         exit
+                      end if
                       if ( status .gt. 0 ) then
                          write (UNIT=text, FMT='(I5)') pnum_lines
                          call mpp_error(FATAL, 'READ_ASCII_FILE: Error reading line '//trim(text)//' in file '//trim(FILENAME)//'.')

@@ -377,19 +377,8 @@ real,dimension(:,:), intent(in), optional :: blon, blat, area_in
 !-------------------------------------------------------------------------------
 !    read namelist.
 !-------------------------------------------------------------------------------
-      if ( file_exist('input.nml')) then
-#ifdef INTERNAL_FILE_NML
-        read (input_nml_file, nml=diag_integral_nml, iostat=io)
-        ierr = check_nml_error(io,'diag_integral_nml')
-#else
-        unit =  open_namelist_file ( )
-        ierr=1; do while (ierr /= 0)
-        read  (unit, nml=diag_integral_nml, iostat=io, end=10)
-        ierr = check_nml_error(io,'diag_integral_nml')
-        end do
-10      call close_file (unit)
-#endif
-      endif
+      read (input_nml_file, nml=diag_integral_nml, iostat=io)
+      ierr = check_nml_error(io,'diag_integral_nml')
 
 !-------------------------------------------------------------------------------
 !    write version number and namelist to logfile.
