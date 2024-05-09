@@ -59,7 +59,11 @@
 #endif
 
   module_is_initialized = .TRUE.
-
+  if (present(test_level)) then
+    t_level = test_level
+  else
+    t_level = -1
+  endif
 
   !PEsets: make defaults illegal
   allocate(peset(0:current_peset_max))
